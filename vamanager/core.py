@@ -16,7 +16,7 @@ class Manager:
         parser.add_argument("command", nargs="?")
         parser.add_argument("args", nargs=argparse.REMAINDER)
         namespace = parser.parse_args()
-        
+
         if not namespace.command or namespace.command in ("-h", "--help", "help"):
             return self.usage()
 
@@ -40,11 +40,7 @@ class Manager:
             return
 
         print("Available commands:")
-        namespace = None
-        for path, cmd in sorted(self.commands.items(), key=lambda c: (c[0].count('.'), c[0])):
-            if cmd.namespace != namespace:
-                if cmd.namespace:
-                    print(f"\n[{cmd.namespace}]")
-                namespace = cmd.namespace
-            name = f"  {cmd.name:<20}"  # canh lề trái, rộng 20 ký tự
-            print(f"{name} {cmd.description or ''}")
+        for name, cmd in sorted(self.commands.items()):
+            # Nếu hàm có docstring, lấy làm description
+            desc = getattr(cmd, "__doc__", "") or ""
+            print(f"  {name:<20} {desc}")
