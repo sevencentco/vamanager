@@ -3,6 +3,7 @@ import argparse
 import os
 
 from .env import load_env
+from .core import Manager
 # ==========================
 # CLI helper (màu, prompt)
 # ==========================
@@ -54,15 +55,10 @@ class PromptArg:
 # ==========================
 # Manager
 # ==========================
-class FullManager:
+class FullManager(Manager):
     def __init__(self):
-        self.commands = {}
+        super().__init__()
         self.prompt_args = {}
-
-    # decorator để đăng ký command
-    def command(self, func):
-        self.commands[func.__name__] = func
-        return func
 
     # decorator để đăng ký prompt args
     def prompt(self, name, message=None, **kwargs):
@@ -77,18 +73,18 @@ class FullManager:
         parser = argparse.ArgumentParser()
         parser.add_argument("command", help="command to run")
         parser.add_argument("args", nargs="*")
-        ns = parser.parse_args()
+        namespace = parser.parse_args()
 
-        if ns.command not in self.commands:
-            CLI.puts(f"Unknown command: {ns.command}", "red")
+        if namespace.command not in self.commands:
+            CLI.puts(f"Unknown command: {namespace.command}", "red")
             CLI.puts("Available commands:\n" + "\n".join(self.commands.keys()), "blue")
             return
 
-        func = self.commands[ns.command]
-        prompts = self.prompt_args.get(ns.command, [])
+        func = self.commands[namespace.command]
+        prompts = self.prompt_args.get(namespace.command, [])
         kwargs = {}
 
         for p in prompts:
             kwargs[p.name] = p.prompt()
 
-        func(*ns.args, **kwargs)
+        func(*namespace.args, **kwargs)
