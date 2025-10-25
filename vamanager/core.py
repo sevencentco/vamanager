@@ -1,6 +1,4 @@
-# core.py
 import argparse
-from .env import load_env
 
 class Manager:
     def __init__(self):
@@ -11,7 +9,6 @@ class Manager:
         return func
 
     def main(self):
-        load_env()
         parser = argparse.ArgumentParser(add_help=False)
         parser.add_argument("command", nargs="?")
         parser.add_argument("args", nargs=argparse.REMAINDER)
