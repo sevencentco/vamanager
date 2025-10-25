@@ -2,6 +2,7 @@
 import argparse
 import os
 
+from .env import load_env
 # ==========================
 # CLI helper (màu, prompt)
 # ==========================
@@ -30,19 +31,6 @@ class CLI:
                 return type_(raw)
             except ValueError:
                 CLI.puts(f"Invalid type, expected {type_.__name__}", "red")
-
-
-# ==========================
-# ENV helper
-# ==========================
-def load_env(filename=".env"):
-    if not os.path.exists(filename):
-        return
-    with open(filename) as f:
-        for line in f:
-            if "=" in line:
-                key, val = line.strip().split("=", 1)
-                os.environ.setdefault(key, val)
 
 
 # ==========================
