@@ -67,24 +67,37 @@ class FullManager(Manager):
             self.prompt_args[func.__name__].append(PromptArg(name, message, **kwargs))
             return func
         return wrapper
+    
+def main(self):
+    # 1️⃣ Nạp biến môi trường từ file .env
+    load_env(filename=".env")
 
-    def main(self):
-        load_env()
-        parser = argparse.ArgumentParser()
-        parser.add_argument("command", help="command to run")
-        parser.add_argument("args", nargs="*")
-        namespace = parser.parse_args()
+    # 2️⃣ Cấu hình argparse
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("command", nargs="?", help="Command to run")
+    parser.add_argument("args", nargs=argparse.REMAINDER)
+    namespace = parser.parse_args()
 
-        if namespace.command not in self.commands:
-            CLI.puts(f"Unknown command: {namespace.command}", "red")
-            CLI.puts("Available commands:\n" + "\n".join(self.commands.keys()), "blue")
-            return
+    # 3️⃣ Xử lý trường hợp không có lệnh hoặc yêu cầu help
+    if not namespace.command or namespace.command in ("-h", "--help", "help"):
+        return self.usage()
 
-        func = self.commands[namespace.command]
-        prompts = self.prompt_args.get(namespace.command, [])
-        kwargs = {}
+    # 4️⃣ Tìm lệnh trong danh sách
+    cmd = self.commands.get(namespace.command)
+    if not cmd:
+        CLI.puts(f"Unknown command: {namespace.command}", "red")
+        CLI.puts("Available commands:\n" + "\n".join(self.commands.keys()), "blue")
+        return self.usage()
 
-        for p in prompts:
-            kwargs[p.name] = p.prompt()
+    # 5️⃣ Nếu lệnh có các prompt tương tác (yêu cầu nhập thêm)
+    prompts = self.prompt_args.get(namespace.command, [])
+    kwargs = {}
+    for p in prompts:
+        kwargs[p.name] = p.prompt()
 
-        func(*namespace.args, **kwargs)
+    # 6️⃣ Thực thi command
+    if callable(cmd):
+        cmd(*namespace.args, **kwargs)
+    else:
+        # Giữ tương thích với các command có parse() riêng
+        cmd.parse(namespace.args)
