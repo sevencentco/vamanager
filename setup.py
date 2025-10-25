@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
-import re
 from os import path
 from setuptools import find_packages, setup
 
 ROOT_DIR = path.abspath(path.dirname(__file__))
 
-DESCRIPTION = 'Gatco-APIManager - APIManager for Gatco'
+DESCRIPTION = 'Vamanager'
 LONG_DESCRIPTION = open(path.join(ROOT_DIR, 'README.rst')).read()
-VERSION = re.search(
-    "__version__ = '([^']+)'",
-    open(path.join(ROOT_DIR, 'vamanager', '__init__.py')).read()
-).group(1)
-
+from vamanager import __version__ as VERSION
 
 setup(
     name='Vamanager',
