@@ -30,8 +30,8 @@ setup(
     zip_safe=False,
     platforms='any',
     entry_points={
-    "console_scripts": [
-        "vamanager = vamanager.manager:main",
-    ],
-},
+        "console_scripts": [
+            "vamanager = vamanager.manager:main",
+        ],
+    },
 )
