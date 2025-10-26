@@ -9,7 +9,7 @@ LONG_DESCRIPTION = open(path.join(ROOT_DIR, 'README.rst')).read()
 from vamanager import __version__ as VERSION
 
 setup(
-    name='Vamanager',
+    name='vamanager',
     version=VERSION,
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
